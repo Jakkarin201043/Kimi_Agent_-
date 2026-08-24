@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b12">
+<title>Hollow Knight Guide</title>
+<style>
+html,body{height:100%;margin:0;background:#070911;color:#eef5ff;font-family:Tahoma,"Noto Sans Thai","Segoe UI",sans-serif}body{display:grid;place-items:center}.box{text-align:center;padding:28px}.mask{width:40px;height:40px;margin:0 auto 18px;border:2px solid #dff5ff;border-radius:48% 48% 44% 44%;box-shadow:0 0 30px rgba(189,233,255,.18);animation:p 1.25s ease-in-out infinite}.box strong{display:block;font-family:Georgia,serif;font-size:22px;margin-bottom:8px}.box span{color:#9aa9bd;font-size:13px}.err{max-width:620px;line-height:1.7;color:#ffb6bd}@keyframes p{50%{transform:scale(.92);opacity:.55}}
+</style>
+</head>
+<body>
+<div class="box" id="status"><div class="mask"></div><strong>Hallownest Atlas</strong><span>กำลังเปิด Hollow Knight Guide…</span></div>
+<script>
+(async()=>{
+  try{
+    const files=[0,1,2,3,4].map(i=>`payload/part${i}.b64`);
+    const parts=await Promise.all(files.map(async f=>{const r=await fetch(f,{cache:'no-store'});if(!r.ok)throw new Error(`โหลด ${f} ไม่สำเร็จ`);return r.text()}));
+    const b64=parts.join('').replace(/\s/g,'');
+    const binary=atob(b64);
+    const bytes=new Uint8Array(binary.length);
+    for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);
+    if(!('DecompressionStream' in window))throw new Error('เบราว์เซอร์นี้เก่าเกินไป กรุณาเปิดด้วย Chrome, Edge, Firefox หรือ Safari รุ่นปัจจุบัน');
+    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    const html=await new Response(stream).text();
+    document.open();document.write(html);document.close();
+  }catch(e){document.getElementById('status').innerHTML=`<strong>เปิดเว็บไม่สำเร็จ</strong><div class="err">${String(e.message||e)}</div>`}
+})();
+</script>
+</body>
+</html>
